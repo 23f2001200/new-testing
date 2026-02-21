@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
+from mangum import Mangum
 import json
 import os
 import numpy as np
@@ -17,7 +18,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load telemetry data bundled alongside this file
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "q-vercel-latency.json")
 
 with open(DATA_PATH, "r") as f:
@@ -30,13 +30,14 @@ class LatencyRequest(BaseModel):
 
 
 @app.options("/api/latency")
-async def options_handler():
+async def options_latency():
     return JSONResponse(
         content={},
+        status_code=200,
         headers={
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
         },
     )
 
@@ -69,3 +70,7 @@ def latency_metrics(req: LatencyRequest):
         content=result,
         headers={"Access-Control-Allow-Origin": "*"},
     )
+
+
+# Mangum adapter — required for Vercel's Python serverless runtime
+handler = Mangum(app, lifespan="off")

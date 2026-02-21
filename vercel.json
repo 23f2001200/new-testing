@@ -1,19 +1,27 @@
 {
-    "builds": [
+    "rewrites": [
         {
-            "src": "api/index.py",
-            "use": "@vercel/python"
+            "source": "/(.*)",
+            "destination": "/api/index"
         }
     ],
-    "routes": [
+    "headers": [
         {
-            "src": "/(.*)",
-            "dest": "api/index.py",
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "POST, OPTIONS",
-                "Access-Control-Allow-Headers": "*"
-            }
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "*"
+                },
+                {
+                    "key": "Access-Control-Allow-Methods",
+                    "value": "GET, POST, OPTIONS"
+                },
+                {
+                    "key": "Access-Control-Allow-Headers",
+                    "value": "Content-Type, Authorization"
+                }
+            ]
         }
     ]
 }
