@@ -1,3 +1,1 @@
-fastapi
-numpy
-mangum
+# No external dependencies — uses only Python stdlib (http.server, json, statistics, os)
